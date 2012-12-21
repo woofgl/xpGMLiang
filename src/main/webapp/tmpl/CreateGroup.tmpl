@@ -1,0 +1,18 @@
+<script id="tmpl-CreateGroup" type="text/html">
+    <div class="CreateGroup">
+		<div class='CreateGroupDialogGlass' />
+	    <div class="CreateGroup-content">
+	        <h2>{{#if groupId}}Edit{{else}}Create{{/if}} Group</h2>
+	        <div class="form">
+		        <div class="control-group">
+		  		Name:<input type="text"  name="name" {{#if title}} value='{{title}}'{{/if}} placeholder=""><span class="help-inline" ></span>
+		  		<br/>
+		  		</div>
+		  		<div>
+		    		<a href="#" class="btn btn-primary createGroupBtn">{{#if groupId}}Update{{else}}Create{{/if}}</a>
+		    		<a href="#" class="btn cancelBtn">Close</a>
+		  		</div>
+	        </div>
+	    </div>
+    </div>
+</script>

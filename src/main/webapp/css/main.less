@@ -1,0 +1,140 @@
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin:0;
+  padding:0;
+}
+
+.fitparent{
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+
+.debugbox{
+  border: dashed 1px #999;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+//  background-color:#000000;
+}
+
+#bodyPage{
+  width: 1024px;
+  height: 768px;
+  margin: 0px auto;
+  position:relative;
+}
+
+/*--------- Twitter/Boostrap custom mixins ---------*/
+.top-border-radius(@radius: 5px) {
+  -webkit-border-top-left-radius: @radius;
+  -moz-border-radius-topleft: @radius;
+  border-top-left-radius: @radius;
+  -webkit-border-top-right-radius: @radius;
+  -moz-border-radius-topright: @radius;
+  border-top-right-radius: @radius;
+}
+.bottom-border-radius(@radius: 5px) {
+  -webkit-border-bottom-left-radius: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  border-bottom-left-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-bottom-right-radius: @radius;
+}
+.right-border-radius(@radius: 5px) {
+  -webkit-border-top-right-radius: @radius;
+  -moz-border-radius-topright: @radius;
+  border-top-right-radius: @radius;
+  -webkit-border-bottom-right-radius: @radius;
+  -moz-border-radius-bottomright: @radius;
+  border-bottom-right-radius: @radius;
+}
+.left-border-radius(@radius: 5px) {
+  -webkit-border-top-left-radius: @radius;
+  -moz-border-radius-topleft: @radius;
+  border-top-left-radius: @radius;
+  -webkit-border-bottom-left-radius: @radius;
+  -moz-border-radius-bottomleft: @radius;
+  border-bottom-left-radius: @radius;
+}
+.transform(@transform){
+  -webkit-transform: @transform;
+  -moz-transform: @transform;
+  transform: @transform;
+}
+.transform-origin(@transform-origin){
+  -webkit-transform-origin: @transform-origin;
+  -moz-transform-origin: @transform-origin;
+  transform-origin: @transform-origin;
+}
+.transform-style(@transform-style){
+  -webkit-transform-style: @transform-style;
+  -moz-transform-style: @transform-style;
+  transform-style: @transform-style;
+}
+.backface-visibility(@param){
+  -webkit-backface-visibility: @param;
+  -moz-backface-visibility: @param;
+  backface-visibility: @param;
+}
+/*--------- /Twitter/Boostrap custom mixins ---------*/
+
+/*--------- Twitter/Boostrap btn-group.vertical ---------*/
+.btn-group.vertical{
+  width:150px;
+}
+.btn-group.vertical .btn{
+  float:none;
+  display:block;
+  border-bottom:0px;
+}
+.btn-group.vertical .btn:first-child{
+  .border-radius(0px);
+  .top-border-radius(4px);
+  margin-left:-1px;
+}
+.btn-group.vertical .btn:last-child{
+  .border-radius(0px);
+  .bottom-border-radius(4px);
+  border-bottom:1px solid #B3B3B3;
+}
+/*--------- /Twitter/Boostrap btn-group.vertical ---------*/
+
+.transparentScreen{
+  position:absolute;
+  left:0;top:0;bottom:0;right:0;
+  z-index: 3;
+}
+
+.notTransparentScreen{
+  position:absolute;
+  left:0;top:0;bottom:0;right:0;
+  background-color:rgba(0,0,0,.4);
+  z-index: 3;
+}
+
+.transitioning{
+  .transition(all .4s ease-in-out);
+}
+.transitioning-fast{
+  .transition(all .2s ease-in-out);
+}
+
+.validateMessage{
+  color:#ff0000;
+}
+
+
+
+
+.table-head-fix{
+	margin-bottom :0px;
+}
+
+.page-header{
+	margin-top: 0px;
+}

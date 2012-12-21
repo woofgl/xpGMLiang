@@ -1,0 +1,68 @@
+<script id="tmpl-CreateContact" type="text/html">
+    <div class="CreateContact">
+        <div class='CreateContactDialogGlass'/>
+        <div class="CreateContact-content">
+            <h2>{{#if id}}Edit{{else}}Create{{/if}} Contact</h2>
+
+            <div class="form form-horizontal">
+
+                <div class="control-group ">
+                    <label class="control-label">Full Name:</label>
+                    <div class="controls">
+                        <input type="hidden" name="etag" {{#if etag}} value="{{etag}}" {{/if}} />
+                        <input type="text" name="fullName" {{#if fullName}}value='{{fullName}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group ">
+                    <label class="control-label">Given Name:</label>
+                    <div class="controls">
+                        <input type="text" name="givenName" {{#if givenName}}value='{{fullName}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group ">
+                    <label class="control-label">Family Name:</label>
+                    <div class="controls">
+                        <input type="text" name="familyName" {{#if familyName}}value='{{familyName}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group ">
+                    <label class="control-label">Email:</label>
+                    <div class="controls">
+                        <input type="text" name="email" {{#if email}}value='{{email}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group ">
+                    <label class="control-label">Phone:</label>
+                    <div class="controls">
+                        <input type="text" name="phone" {{#if phone}}value='{{phone}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+
+                <div class="control-group ">
+                    <label class="control-label">Birth Date:</label>
+                    <div class="controls">
+                        <input type="text" name="bir" {{#if bir}}value='{{bir}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group ">
+                    <label class="control-label">Group:</label>
+                    <div class="controls">
+                        <input type="text" name="groupId" {{#if groupId}}value='{{groupId}}' {{/if}} placeholder=""><span class="help-inline"></span>
+                    </div>
+                </div>
+                <div class="control-group ">
+                    <label class="control-label">Note:</label>
+                    <div class="controls">
+                        <textarea rows="5" style="width:280px" name="notes" placeholder="note hear">{{#if notes}}{{notes}}{{/if}}</textarea>
+                    </div>
+                </div>
+
+
+                <div class="form-actions">
+                    <a href="#" class="btn btn-primary createContactBtn">{{#if id}}Update{{else}}Create{{/if}}</a>
+                    <a href="#" class="btn cancelBtn">Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
