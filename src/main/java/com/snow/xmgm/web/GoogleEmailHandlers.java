@@ -1,17 +1,17 @@
 package com.snow.xmgm.web;
 
 
+import com.britesnow.snow.web.handler.annotation.WebActionHandler;
 import com.britesnow.snow.web.handler.annotation.WebModelHandler;
 import com.britesnow.snow.web.param.annotation.WebModel;
+import com.britesnow.snow.web.param.annotation.WebParam;
 import com.britesnow.snow.web.param.annotation.WebUser;
 import com.google.inject.Inject;
 import com.snow.xmgm.mail.MailInfo;
 import com.snow.xmgm.mail.OAuth2Authenticator;
 import com.sun.mail.imap.IMAPStore;
 
-import javax.mail.FetchProfile;
-import javax.mail.Folder;
-import javax.mail.Message;
+import javax.mail.*;
 import javax.mail.internet.MimeUtility;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -49,12 +49,36 @@ public class GoogleEmailHandlers {
             inbox.close(false);
 
             for (Message message : messages) {
-                MailInfo info = new MailInfo(message.getSentDate().getTime(),
+                MailInfo info = new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
                         decodeText(message.getFrom()[0].toString()), message.getSubject());
                 mailInfos.add(0, info);
             }
         }
         m.put("result", mailInfos);
+    }
+    @WebModelHandler(startsWith = "/getEmails")
+    public void getEmail(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email, @WebModel Map m, @WebParam("id") Integer id) throws Exception {
+        IMAPStore imap = emailAuthenticator.connectToImap(email, token);
+        Folder inbox = imap.getFolder("INBOX");
+        inbox.open(Folder.READ_ONLY);
+        FetchProfile profile = new FetchProfile();
+        profile.add(FetchProfile.Item.ENVELOPE);
+        if (!inbox.isOpen()) {
+            inbox.open(Folder.READ_ONLY);
+        }
+
+        Message message = inbox.getMessage(id);
+
+        m.put("result", new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
+                decodeText(message.getFrom()[0].toString()), message.getSubject()));
+    }
+    @WebActionHandler
+    public void deleteEmail(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email, @WebParam("id") Integer id) throws Exception {
+        IMAPStore imap = emailAuthenticator.connectToImap(email, token);
+        Folder inbox = imap.getFolder("INBOX");
+        inbox.open(Folder.READ_WRITE);
+        Message msg = inbox.getMessage(id);
+        msg.setFlag(Flags.Flag.DELETED, true);
     }
 
 
@@ -69,6 +93,32 @@ public class GoogleEmailHandlers {
         }
         return text;
 
+    }
+
+    private String getContent(Message message) throws Exception {
+        StringBuffer str = new StringBuffer();
+        if (message.isMimeType("text/plain"))
+            str.append(message.getContent().toString());
+        if (message.isMimeType("multipart/alternative")) {
+            Multipart part = (Multipart) message.getContent();
+            str.append(part.getBodyPart(1).getContent().toString());
+        }
+        if (message.isMimeType("multipart/related")) {
+            Multipart part = (Multipart) message.getContent();
+            Multipart cpart = (Multipart) part.getBodyPart(0).getContent();
+            str.append(cpart.getBodyPart(1).getContent().toString());
+        }
+        if (message.isMimeType("multipart/mixed")) {
+            Multipart part = (Multipart) message.getContent();
+            if (part.getBodyPart(0).isMimeType("text/plain")) {
+                str.append(part.getBodyPart(0).getContent());
+            }
+            if (part.getBodyPart(0).isMimeType("multipart/alternative")) {
+                Multipart cpart = (Multipart) part.getBodyPart(0).getContent();
+                str.append(cpart.getBodyPart(1).getContent());
+            }
+        }
+        return str.toString();
     }
 
 }

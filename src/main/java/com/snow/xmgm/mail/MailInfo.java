@@ -4,11 +4,13 @@ package com.snow.xmgm.mail;
 import java.util.Date;
 
 public class MailInfo {
+    private int id;
     private long date;
     private String from;
     private String subject;
 
-    public MailInfo(long date, String from, String subject) {
+    public MailInfo(int id, long date, String from, String subject) {
+        this.id = id;
         this.date = date;
         this.from = from;
         this.subject = subject;
@@ -40,4 +42,9 @@ public class MailInfo {
     public void setSubject(String subject) {
         this.subject = subject;
     }
+
+    public int getId() {
+        return id;
+    }
+
 }
