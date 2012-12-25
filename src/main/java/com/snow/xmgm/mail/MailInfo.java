@@ -8,6 +8,7 @@ public class MailInfo {
     private long date;
     private String from;
     private String subject;
+    private String content;
 
     public MailInfo(int id, long date, String from, String subject) {
         this.id = id;
@@ -47,4 +48,11 @@ public class MailInfo {
         return id;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getContent() {
+        return content;
+    }
 }

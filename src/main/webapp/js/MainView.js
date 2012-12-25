@@ -6,10 +6,7 @@
         },
 
         postDisplay:function (data, config) {
-             var view = this;
-             var $e = view.$el;
-             console.log($e.find("li.active"));
-             $e.find("li.active a").trigger("btap");
+            $("body").trigger("REFLESH");
         },
 
         events:{
@@ -47,14 +44,32 @@
                     opts:{
                         htmlIfEmpty: "Not emails found",
                         withPaging: false,
-                        withCmdDelete:false
+                        cmdDelete:"DELETE_EMAIL"
                     }
                 });
             }
         },
 
         docEvents:{
+           "DELETE_EMAIL": function(event, extra){
+               var view = this;
+               if(extra.objId){
+                   app.deleteEmail(extra.objId).done(function(result){
+                       console.log(result);
+                       setTimeout(function(){
+                           view.$el.find("li.active a").trigger("btap");
+                       }, 3000)
 
+                   });
+               }
+           },
+            "REFLESH": function() {
+                console.log("reflesh");
+                var view = this;
+                var $e = view.$el;
+                console.log($e.find("li.active"));
+                $e.find("li.active a").trigger("btap");
+            }
         },
 
         daoEvents:{

@@ -1,6 +1,7 @@
 package com.snow.xmgm.web;
 
 
+import com.britesnow.snow.web.RequestContext;
 import com.britesnow.snow.web.handler.annotation.WebActionHandler;
 import com.britesnow.snow.web.handler.annotation.WebModelHandler;
 import com.britesnow.snow.web.param.annotation.WebModel;
@@ -10,11 +11,15 @@ import com.google.inject.Inject;
 import com.snow.xmgm.mail.MailInfo;
 import com.snow.xmgm.mail.OAuth2Authenticator;
 import com.sun.mail.imap.IMAPStore;
+import com.sun.mail.smtp.SMTPTransport;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,17 +73,22 @@ public class GoogleEmailHandlers {
         }
 
         Message message = inbox.getMessage(id);
-
-        m.put("result", new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
-                decodeText(message.getFrom()[0].toString()), message.getSubject()));
+        MailInfo info =  new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
+                decodeText(message.getFrom()[0].toString()), message.getSubject());
+        info.setContent(getContent(message));
+        m.put("result", info);
     }
-    @WebActionHandler
-    public void deleteEmail(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email, @WebParam("id") Integer id) throws Exception {
+    @WebActionHandler(name = "deleteEmail")
+    public Object deleteEmail(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email,
+                            @WebParam("id") Integer id, RequestContext rc) throws Exception {
         IMAPStore imap = emailAuthenticator.connectToImap(email, token);
         Folder inbox = imap.getFolder("INBOX");
         inbox.open(Folder.READ_WRITE);
         Message msg = inbox.getMessage(id);
         msg.setFlag(Flags.Flag.DELETED, true);
+        Map map = new HashMap();
+        map.put("result", true);
+        return map;
     }
 
 
@@ -119,6 +129,27 @@ public class GoogleEmailHandlers {
             }
         }
         return str.toString();
+    }
+
+    @WebActionHandler
+    public Object sendMail(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email,
+                           @WebModel Map m, @WebParam("subject") String subject,
+                           @WebParam("content") String content,@WebParam("to") String to, RequestContext rc) throws Exception {
+        SMTPTransport transport = emailAuthenticator.connectToSmtp(email, token);
+        Session mailSession = emailAuthenticator.getSMTPSession(token);
+        Message msg = new MimeMessage(mailSession);
+        try {
+            msg.setFrom(new InternetAddress(email));
+            msg.setSubject(subject);
+            msg.setContent(content, "text/html;charset=UTF-8");
+            InternetAddress[] iaRecevers = new InternetAddress[1];
+            iaRecevers[0] = new InternetAddress(to);
+            msg.setRecipients(Message.RecipientType.TO, iaRecevers);
+            transport.sendMessage(msg, msg.getAllRecipients());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

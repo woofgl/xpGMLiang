@@ -89,7 +89,7 @@ public class GoogleAuthRequest implements AuthRequest {
                 //email=woofgl@gmail.com&isVerified=true
                 String email = getUrlParam(res.parseAsString(), "email");
                 rc.setCookie(EMAIL,email);
-                rc.getRes().sendRedirect(rc.getReq().getContextPath() + "/getEmails");
+                rc.getRes().sendRedirect(rc.getReq().getContextPath() );
 
             }
 

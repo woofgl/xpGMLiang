@@ -73,6 +73,13 @@ var app = app || {};
         };
         return app.getJsonData(contextPath + "/getEmails.json", $.extend(params, opts||{}));
     };
+    app.deleteEmail=function(id){
+        var params = {id: id};
+        params.method = "Post"
+
+        return app.getJsonData(contextPath + "/deleteEmail.do", params);
+    }
+
 
 
 

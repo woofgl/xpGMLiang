@@ -168,4 +168,15 @@ public class OAuth2Authenticator {
                 true);
         System.out.println("Successfully authenticated to SMTP.");
     }*/
+
+
+    public Session getSMTPSession(String oauthToken) {
+            Properties props = new Properties();
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.starttls.required", "true");
+            props.put("mail.smtp.sasl.enable", "true");
+            props.put("mail.smtp.sasl.mechanisms", "XOAUTH2");
+            props.put(OAuth2SaslClientFactory.OAUTH_TOKEN_PROP, oauthToken);
+            return Session.getInstance(props);
+    }
 }
