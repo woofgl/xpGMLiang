@@ -4,10 +4,9 @@
 	<div class="navbar">
               <div class="navbar-inner">
                 <ul class="nav">
-                  <li class="active" ><a href="#" class="showEmails">Emails</a></li>
-                  <!--<li><a href="#" class="showGroups">Groups</a></li>-->
-                  <!--<li><a href="#" class="createContact" >Create Contact</a></li>-->
-                  <!--<li><a href="#" class="createGroup" >Create Group</a></li>-->
+                  {{#each result}}
+                  <li data-name="{{name}}"><a href="#" class="showEmails">{{fullName}}</a></li>
+                  {{/each}}
                 </ul>
               </div>
             </div>

@@ -78,6 +78,10 @@ var app = app || {};
         params.method = "Post"
 
         return app.getJsonData(contextPath + "/deleteEmail.do", params);
+    };
+    app.getFolders=function(){
+        var params = {method: "Get"};
+        return app.getJsonData(contextPath + "/getFolders.json", params);
     }
 
 

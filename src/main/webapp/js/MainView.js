@@ -1,19 +1,28 @@
 (function ($) {
 
-    brite.registerView("MainView", {loadTmpl:true}, {
-        create:function (data, config) {
-            return $("#tmpl-MainView").render();
+    brite.registerView("MainView", {loadTmpl: true}, {
+        create: function (data, config) {
+            var dfd = $.Deferred();
+            app.getFolders().done(function(data){
+                var html = $("#tmpl-MainView").render(data);
+                console.log(html);
+                dfd.resolve(html);
+            });
+            return dfd.promise();
         },
 
         postDisplay:function (data, config) {
-            $("body").trigger("REFLESH");
+            this.$el.find("li:first a").trigger("btap");
         },
 
         events:{
             "btap; .showEmails":function (event, extra) {
                 $(event.currentTarget).closest("ul").find("li").removeClass("active");
                 $(event.currentTarget).closest("li").addClass("active");
-                var emails = app.getEmails(extra);
+                var folderName = $(event.currentTarget).closest("li").attr("data-name");
+                var params = extra||{};
+                params.folderName = folderName;
+                var emails = app.getEmails(params);
                 brite.display("DataTable", ".MainView-content", {
                     gridData:emails,
                     columnDef:[
@@ -68,7 +77,7 @@
                 var view = this;
                 var $e = view.$el;
                 console.log($e.find("li.active"));
-                $e.find("li.active a").trigger("btap");
+                $e.find("li:active a").trigger("btap");
             }
         },
 

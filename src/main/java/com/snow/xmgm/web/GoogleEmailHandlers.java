@@ -28,10 +28,32 @@ public class GoogleEmailHandlers {
     @Inject
     OAuth2Authenticator emailAuthenticator;
 
-    @WebModelHandler(startsWith = "/getEmails")
-    public void listEmails(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email, @WebModel Map m) throws Exception {
+    @WebModelHandler(startsWith = "/getFolders")
+    public void listFolders(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email, @WebModel Map m) throws Exception {
         IMAPStore imap = emailAuthenticator.connectToImap(email, token);
-        Folder inbox = imap.getFolder("INBOX");
+        Folder[] folders = imap.getDefaultFolder().list();
+        List list = new ArrayList();
+        for (Folder folder : folders) {
+            Map map = new HashMap();
+            map.put("name", folder.getName());
+            map.put("fullName", folder.getFullName());
+            list.add(map);
+        }
+        m.put("result", list);
+    }
+
+    @WebModelHandler(startsWith = "/getEmails")
+    public void listEmails(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email,
+                           @WebModel Map m, @WebParam("folderName") String folderName) throws Exception {
+        IMAPStore imap = emailAuthenticator.connectToImap(email, token);
+
+        Folder inbox;
+        if (folderName == null) {
+            inbox = imap.getFolder("INBOX");
+        }else {
+            inbox = imap.getFolder(folderName);
+        }
+
         inbox.open(Folder.READ_ONLY);
         FetchProfile profile = new FetchProfile();
         profile.add(FetchProfile.Item.ENVELOPE);
@@ -83,6 +105,7 @@ public class GoogleEmailHandlers {
                             @WebParam("id") Integer id, RequestContext rc) throws Exception {
         IMAPStore imap = emailAuthenticator.connectToImap(email, token);
         Folder inbox = imap.getFolder("INBOX");
+
         inbox.open(Folder.READ_WRITE);
         Message msg = inbox.getMessage(id);
         msg.setFlag(Flags.Flag.DELETED, true);
