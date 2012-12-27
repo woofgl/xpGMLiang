@@ -1,3 +1,4 @@
+
 (function ($) {
 
     brite.registerView("MainView", {loadTmpl: true}, {
@@ -16,46 +17,23 @@
         },
 
         events:{
+            "btap; li .btn.search": function(){
+                var view = this;
+                var $e = view.$el;
+                var subject = $e.find("li.search input[name='searchSubject']").val();
+                var from = $e.find("li.search input[name='searchFrom']").val();
+                var emails = app.searchEmails({subject: subject, from:from});
+                showEmails.call(view, emails);
+            },
             "btap; .showEmails":function (event, extra) {
+                var view = this;
                 $(event.currentTarget).closest("ul").find("li").removeClass("active");
                 $(event.currentTarget).closest("li").addClass("active");
                 var folderName = $(event.currentTarget).closest("li").attr("data-name");
                 var params = extra||{};
                 params.folderName = folderName;
                 var emails = app.getEmails(params);
-                brite.display("DataTable", ".MainView-content", {
-                    gridData:emails,
-                    columnDef:[
-                        {
-                            text:"#",
-                            render: function(obj, idx){return idx + 1},
-                            attrs:"style='width: 10%'"
-                        },
-                        {
-                            text:"Date",
-                            render:function(obj){
-                                var recDate = new Date(obj.date);
-                                return recDate.format("yyyy-MM-dd hh:mm:ss")
-                            },
-                            attrs:"style='width: 20%'"
-
-                        },
-                        {
-                            text:"From",
-                            render:function(obj){return obj.from},
-                            attrs:"style='width: 25%'"
-                        },
-                        {
-                            text:"Subject",
-                            render:function(obj){return obj.subject}
-                        }
-                    ],
-                    opts:{
-                        htmlIfEmpty: "Not emails found",
-                        withPaging: false,
-                        cmdDelete:"DELETE_EMAIL"
-                    }
-                });
+                showEmails.call(view, emails);
             }
         },
 
@@ -84,5 +62,47 @@
         daoEvents:{
         }
     });
+
+    function showEmails(emails) {
+        brite.display("DataTable", ".MainView-content", {
+            gridData: emails,
+            columnDef: [
+                {
+                    text: "#",
+                    render: function (obj, idx) {
+                        return idx + 1
+                    },
+                    attrs: "style='width: 10%'"
+                },
+                {
+                    text: "Date",
+                    render: function (obj) {
+                        var recDate = new Date(obj.date);
+                        return recDate.format("yyyy-MM-dd hh:mm:ss")
+                    },
+                    attrs: "style='width: 20%'"
+
+                },
+                {
+                    text: "From",
+                    render: function (obj) {
+                        return obj.from
+                    },
+                    attrs: "style='width: 25%'"
+                },
+                {
+                    text: "Subject",
+                    render: function (obj) {
+                        return obj.subject
+                    }
+                }
+            ],
+            opts: {
+                htmlIfEmpty: "Not emails found",
+                withPaging: false,
+                cmdDelete: "DELETE_EMAIL"
+            }
+        });
+    }
 
 })(jQuery);

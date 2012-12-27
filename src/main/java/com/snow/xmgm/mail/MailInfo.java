@@ -1,6 +1,7 @@
 package com.snow.xmgm.mail;
 
 
+import javax.mail.Message;
 import java.util.Date;
 
 public class MailInfo {
@@ -17,7 +18,9 @@ public class MailInfo {
         this.subject = subject;
     }
 
-    public MailInfo() {
+
+    public MailInfo(Message msg) {
+
     }
 
     public long getDate() {

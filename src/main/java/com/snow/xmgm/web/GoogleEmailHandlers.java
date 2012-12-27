@@ -17,6 +17,7 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
+import javax.mail.search.*;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,8 +77,7 @@ public class GoogleEmailHandlers {
             inbox.close(false);
 
             for (Message message : messages) {
-                MailInfo info = new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
-                        decodeText(message.getFrom()[0].toString()), message.getSubject());
+                MailInfo info = buildMailInfo(message);
                 mailInfos.add(0, info);
             }
         }
@@ -95,11 +95,16 @@ public class GoogleEmailHandlers {
         }
 
         Message message = inbox.getMessage(id);
-        MailInfo info =  new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
-                decodeText(message.getFrom()[0].toString()), message.getSubject());
+        MailInfo info = buildMailInfo(message);
         info.setContent(getContent(message));
         m.put("result", info);
     }
+
+    private MailInfo buildMailInfo(Message message) throws MessagingException, UnsupportedEncodingException {
+        return new MailInfo(message.getMessageNumber(), message.getSentDate().getTime(),
+                decodeText(message.getFrom()[0].toString()), message.getSubject());
+    }
+
     @WebActionHandler(name = "deleteEmail")
     public Object deleteEmail(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email,
                             @WebParam("id") Integer id, RequestContext rc) throws Exception {
@@ -173,6 +178,39 @@ public class GoogleEmailHandlers {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @WebModelHandler(startsWith = "/searchEmails")
+    public void search(@WebUser String token, @CookieParam(GoogleAuthRequest.EMAIL) String email,
+                       @WebModel Map m, @WebParam("subject") String subject, @WebParam("from") String from) throws Exception {
+        IMAPStore imap = emailAuthenticator.connectToImap(email, token);
+        Folder inbox = imap.getFolder("INBOX");
+        inbox.open(Folder.READ_ONLY);
+        List<SearchTerm> searchTerms = new ArrayList<SearchTerm>();
+        if (subject != null) {
+            SubjectTerm subjectTerm = new SubjectTerm(subject);
+            searchTerms.add(subjectTerm);
+        }
+        if (from != null) {
+            FromStringTerm fromStringTerm = new FromStringTerm(from);
+            searchTerms.add(fromStringTerm);
+        }
+        if (searchTerms.size() > 0) {
+            Message[] msgs = inbox.search(new OrTerm(searchTerms.toArray(new SearchTerm[searchTerms.size()])));
+            List<MailInfo> infos = new ArrayList<MailInfo>();
+            if (msgs.length > 0) {
+
+                for (Message msg : msgs) {
+                    infos.add(buildMailInfo(msg));
+                }
+            }
+
+            m.put("result", infos);
+            m.put("success", true);
+        }else {
+            m.put("success", false);
+        }
+        inbox.close(true);
     }
 
 }

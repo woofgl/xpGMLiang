@@ -7,6 +7,11 @@
                   {{#each result}}
                   <li data-name="{{name}}"><a href="#" class="showEmails">{{fullName}}</a></li>
                   {{/each}}
+                  <li class="search" >
+                     <input type="text" name="searchSubject"/>
+                     <input type="text" name="searchFrom"/>
+                     <button class="btn search" >Search</button>
+                  </li>
                 </ul>
               </div>
             </div>

@@ -82,7 +82,14 @@ var app = app || {};
     app.getFolders=function(){
         var params = {method: "Get"};
         return app.getJsonData(contextPath + "/getFolders.json", params);
+    };
+
+    app.searchEmails=function(opts){
+       var params = opts||{};
+        params.method = "Get";
+        return app.getJsonData(contextPath + "/searchEmails.json", params);
     }
+
 
 
 
