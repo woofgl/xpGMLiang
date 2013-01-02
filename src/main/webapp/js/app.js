@@ -235,10 +235,15 @@ var app = app || {};
     //need Handlebars load first for compiled version
     var compiled = Handlebars.templates||{};
     $.fn.render = function(data) {
-        if(!compiled.hasOwnProperty(this.selector)){
-           compiled[this.selector] =  Handlebars.compile(this.html());
+        try {
+            if (!compiled.hasOwnProperty(this.selector)) {
+                compiled[this.selector] = Handlebars.compile(this.html());
+            }
+            return compiled[this.selector](data);
+        } catch (e) {
+            // obviously, handle this case as you think most appropriate.
+            return "<small>Error: could not find template: " + templateName + "</small>";
         }
-        return compiled[this.selector](data);
     };
 
     Handlebars.registerHelper('check', function (lvalue, operator, rvalue, options) {

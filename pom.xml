@@ -116,6 +116,11 @@
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.9</version>
+        </dependency>
 
         <!-- /Logging -->
 
@@ -138,13 +143,15 @@
                     <version>8.4-701.jdbc4</version>
                 </dependency>-->
 
+
+
         <!-- /Database -->
 
         <!-- Hibernate -->
         <!-- TODO: Remove this section if the project does not use Hibernate -->
         <!-- TODO: If you project use Hibernate, update the version to the latest one -->
         <!-- Note: this project use Hibernate, howewer, Hibernate is optional in snow and you can use any other store framework -->
-        <!--         <dependency>
+                 <dependency>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-core</artifactId>
                     <version>4.1.7.Final</version>
@@ -154,7 +161,7 @@
                     <artifactId>hibernate-c3p0</artifactId>
                     <version>4.1.7.Final</version>
                 </dependency>
-         -->        <!-- /Hibernate -->
+                  <!--/Hibernate-->
 
         <!--         <dependency>
                     <groupId>com.google.gdata</groupId>

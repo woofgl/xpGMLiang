@@ -8,6 +8,8 @@ import org.apache.tools.ant.taskdefs.SQLExec;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.util.Map;
 
 public class AntExecSqlTask implements SnowTask {
@@ -17,7 +19,6 @@ public class AntExecSqlTask implements SnowTask {
 
     @Override
     public void run() {
-        System.out.println("RUN IMPORT Sql TASK");
         String importSql = (String) cfg.get("sql.import");
         if (importSql != null && Boolean.parseBoolean(importSql)) {
 
@@ -32,12 +33,28 @@ public class AntExecSqlTask implements SnowTask {
                 sqlExec.setUrl(url.trim());
                 sqlExec.setUserid(user.trim());
                 sqlExec.setPassword(passwd.trim());
-                sqlExec.setSrc(new File(src.trim()));
+
                 sqlExec.setOnerror((SQLExec.OnError) (EnumeratedAttribute.getInstance(SQLExec.OnError.class, "abort")));
                 sqlExec.setPrint(true);
                 //sqlExec.setOutput(new File("src/sql.out"));
                 sqlExec.setProject(new Project());
-                sqlExec.execute();
+                File srcFile = new File(src.trim());
+                if (srcFile.exists() && srcFile.isDirectory()) {
+                    File[] files = srcFile.listFiles(new FileFilter() {
+                        @Override
+                        public boolean accept(File pathname) {
+                            return pathname.isFile() && pathname.getAbsolutePath().endsWith(".sql");
+                        }
+                    });
+                    for (File file : files) {
+                        sqlExec.setSrc(file);
+                        sqlExec.execute();
+                    }
+            }else{
+                    sqlExec.setSrc(new File(src.trim()));
+                    sqlExec.execute();
+                }
+
             }
 
         }
