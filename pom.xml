@@ -31,6 +31,10 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
+                                <exec executable="java">
+                                    <arg line="-jar"/>
+                                    <arg line="apps/jcruncherEx.jar"/>
+                                </exec>
                                 <mkdir dir="../war"/>
                                 <delete includeemptydirs="true">
                                     <fileset dir="../war" includes="**/*" excludes=".git/"/>

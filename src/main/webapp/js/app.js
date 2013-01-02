@@ -232,7 +232,8 @@ var app = app || {};
 })();
 //handlebars plugin
 (function($) {
-    var compiled = {};
+    //need Handlebars load first for compiled version
+    var compiled = Handlebars.templates||{};
     $.fn.render = function(data) {
         if(!compiled.hasOwnProperty(this.selector)){
            compiled[this.selector] =  Handlebars.compile(this.html());
